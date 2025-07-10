@@ -16,6 +16,12 @@ public class CameraDrag : MonoBehaviour
         _mainCamera = Camera.main;
     }
 
+    private void Start()
+    {
+        GameEvents.current.onHeartClicked += CenterCamera;
+
+    }
+
     public void OnDrag(InputAction.CallbackContext ctx)
     {
         if (ctx.started) _origin = GetMousePosition;
@@ -29,6 +35,13 @@ public class CameraDrag : MonoBehaviour
         _difference = GetMousePosition - transform.position;
         transform.DOMove(_origin - _difference, 1f);
         //transform.position = _origin - _difference;
+    }
+
+    private void CenterCamera(Vector3 newPos)
+    {
+        DOTween.KillAll();
+        transform.DOMove(newPos, 0.5f).SetEase(Ease.OutBack);
+
     }
 
 

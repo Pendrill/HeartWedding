@@ -51,6 +51,7 @@ public class Heart : MonoBehaviour
 
     void HeartClicked()
     {
+        GameEvents.current.HeartClicked(new Vector3(transform.position.x, transform.position.y, -10));
         currentHeartState =currentClickRate < 1 ?  heartState.Clicked : heartState.FinalBeats;
         //DOTween.KillAll();
         currentClickRate += 1 / clicksNeeded;
