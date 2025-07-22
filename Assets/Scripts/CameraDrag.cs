@@ -11,6 +11,8 @@ public class CameraDrag : MonoBehaviour
 
     private bool _isDragging;
 
+    public Material mat;
+
     private void Awake()
     {
         _mainCamera = Camera.main;
@@ -30,10 +32,14 @@ public class CameraDrag : MonoBehaviour
 
     private void LateUpdate()
     {
+        mat.SetTextureOffset("_MainTex", transform.position / 30);
         if (!_isDragging) return;
 
         _difference = GetMousePosition - transform.position;
         transform.DOMove(_origin - _difference, 1f);
+
+        Vector3 backgroundTextureVector3 = transform.position;
+       
         //transform.position = _origin - _difference;
     }
 
