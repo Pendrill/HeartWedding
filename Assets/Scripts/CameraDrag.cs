@@ -45,9 +45,8 @@ public class CameraDrag : MonoBehaviour
 
     private void CenterCamera(Vector3 newPos)
     {
-        DOTween.KillAll();
+        //DOTween.KillAll();
         transform.DOMove(newPos, 0.5f).SetEase(Ease.OutBack);
-
     }
 
 
