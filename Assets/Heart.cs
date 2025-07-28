@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class Heart : MonoBehaviour
 {
-    public enum heartState {Idle, Clicked, FinalBeats, Completing, Complete};
-    heartState currentHeartState = heartState.Idle;
+    public enum heartState {Wait, Born, Idle, Clicked, FinalBeats, Completing, Complete};
+    public heartState currentHeartState = heartState.Wait;
 
     public float targetClickSize = 3f;
     public float clickSpeed = 0.3f;
@@ -18,6 +18,10 @@ public class Heart : MonoBehaviour
     private float currentClickRate = 0f;
     private float currentSliderValue = 0f;
     private int finalBeats = 3;
+
+
+    [SerializeField]
+    private Ease customEase;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,12 +31,20 @@ public class Heart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        CheckHeartStatus();
     }
 
     private void OnMouseOver()
     {
         //Debug.Log("mouse is over the object");
+    }
+
+    private void CheckHeartStatus()
+    {
+        if(currentHeartState == heartState.Born)
+        {
+            ShowInitialHeart();
+        }
     }
 
     private void OnMouseDown()
@@ -100,12 +112,13 @@ public class Heart : MonoBehaviour
     {
         //Do Final Animation
         Sequence heartPos = DOTween.Sequence();
-        heartPos.Append(transform.DOMoveY(transform.localPosition.y + 3.5f, 0.4f).SetEase(Ease.InSine));
-        heartPos.Append(transform.DOMoveY(transform.localPosition.y, 1f).SetDelay(0.1f).SetEase(Ease.InSine));
+        heartPos.Append(transform.DOLocalMoveY(transform.localPosition.y + .85f, 0.4f).SetEase(Ease.InSine));
+        heartPos.Append(transform.DOLocalMoveY(transform.localPosition.y, 1f).SetDelay(0.1f).SetEase(Ease.InSine));
         
         transform.DORotate(new Vector3(0, 360, 0), 0.75f, RotateMode.FastBeyond360).SetLoops(2, LoopType.Restart).SetEase(Ease.Linear);
 
         HideSlider();
+        HideShadow();
 
         heartPos.OnComplete(SetHeartBeat);
     }
@@ -117,6 +130,7 @@ public class Heart : MonoBehaviour
         heartBeat.Append(transform.DOScale(transform.localScale * 1.2f, 0.3f).SetEase(Ease.InSine));
         heartBeat.Append(transform.DOScale(transform.localScale , 01f).SetEase(Ease.InSine));
         heartBeat.SetLoops(-1, LoopType.Restart);
+        ShowShadow();
 
     }
 
@@ -137,6 +151,29 @@ public class Heart : MonoBehaviour
     {
         currentSliderValue += 1 / (clicksNeeded + finalBeats);
         GameEvents.current.IncreaseHeartSlider(this.GetComponent<Heart>(), currentSliderValue); 
+    }
+
+    void HideShadow()
+    {
+        GameObject shadow = transform.GetChild(1).gameObject;
+        shadow.GetComponent<SpriteRenderer>().DOColor(new Color(0f, 0f, 0f, 0f), 0.3f);
+    }
+
+    void ShowShadow()
+    {
+        GameObject shadow = transform.GetChild(1).gameObject;
+        shadow.GetComponent<SpriteRenderer>().DOColor(new Color(0f, 0f, 0f, 0.7f), 0.1f);
+    }
+
+    void ShowInitialHeart()
+    {
+        transform.DOScale(new Vector3(1f, 1f, 1f), .3f).SetEase(Ease.OutBack).OnComplete(ShowInitialHeartComplete);
+    }
+
+    void ShowInitialHeartComplete()
+    {
+        currentHeartState = heartState.Idle;
+        GetComponent<BoxCollider2D>().enabled = true;
     }
 
 }
