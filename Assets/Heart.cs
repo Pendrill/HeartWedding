@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Heart : MonoBehaviour
 {
+
+    public GameObject heartParticle;
     public enum heartState {Wait, Born, Idle, Clicked, FinalBeats, Completing, Complete};
     public heartState currentHeartState = heartState.Wait;
 
@@ -75,6 +77,7 @@ public class Heart : MonoBehaviour
     void HeartClicked()
     {
         GameEvents.current.HeartClicked(new Vector3(transform.position.x, transform.position.y, -10));
+        CreateParticle(Random.Range(1,10));
        
         currentHeartState = currentClickRate < 1 ? heartState.Clicked : heartState.FinalBeats;
         currentClickRate += 1 / clicksNeeded;
@@ -91,6 +94,7 @@ public class Heart : MonoBehaviour
 
     void HeartFinalBeats()
     {
+        CreateParticle(Random.Range(1, 10));
         finalBeats -= 1;
         currentHeartState = finalBeats != 0 ? heartState.FinalBeats : heartState.Completing;
         Vector3 targetScale = transform.localScale * 1.1f;
@@ -128,7 +132,7 @@ public class Heart : MonoBehaviour
         currentHeartState = heartState.Complete;
         Sequence heartBeat = DOTween.Sequence();
         heartBeat.Append(transform.DOScale(transform.localScale * 1.2f, 0.3f).SetEase(Ease.InSine));
-        heartBeat.Append(transform.DOScale(transform.localScale , 01f).SetEase(Ease.InSine));
+        heartBeat.Append(transform.DOScale(transform.localScale , 01f).SetEase(Ease.InSine).OnComplete(() => CreateParticle(1)));
         heartBeat.SetLoops(-1, LoopType.Restart);
         ShowShadow();
 
@@ -174,6 +178,16 @@ public class Heart : MonoBehaviour
     {
         currentHeartState = heartState.Idle;
         GetComponent<BoxCollider2D>().enabled = true;
+    }
+
+
+    void CreateParticle(int heartParticleCap)
+    {
+        for(int i = 0; i < heartParticleCap; i++)
+        {
+            Instantiate(heartParticle, transform.parent.transform);
+        }
+        
     }
 
 }
