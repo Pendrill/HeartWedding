@@ -16,6 +16,7 @@ public class GameEvents : MonoBehaviour
     public event Action<Heart, float> onIncreaseHeartSlider;
     public event Action<Heart> onShowSlider;
     public event Action<Heart> onHideSlider;
+    public event Action<int> onHeartCollected;
 
 
 
@@ -48,6 +49,14 @@ public class GameEvents : MonoBehaviour
         if (onHideSlider != null)
         {
             onHideSlider(heart);
+        }
+    }
+
+    public void HeartCollected(int heartValue)
+    {
+        if(onHeartCollected != null)
+        {
+            onHeartCollected(heartValue);
         }
     }
 }

@@ -31,7 +31,6 @@ public class UpdateSlider : MonoBehaviour
 
     void SliderNeedsUpdating(Heart heart, float sliderValue)
     {
-        Debug.Log("slider needs updating");
         Debug.Log(heart == currentHeart);
        if(heart == currentHeart)
         {
@@ -42,7 +41,6 @@ public class UpdateSlider : MonoBehaviour
 
     public void UpdateFill(float value)
     {
-        Debug.Log("are we updating fills");
         currentFill = Mathf.Min(value, 1f);
         //fill.transform.DOScaleX(currentFill, 0.5f);
         UpdatePivot(currentFill);
@@ -67,10 +65,8 @@ public class UpdateSlider : MonoBehaviour
 
     void ShowSlider(Heart heart)
     {
-        Debug.Log("here");
         if(heart == currentHeart)
         {
-            Debug.Log("are we actually here");
             //transform.DOLocalMoveY(-3f, .4f);
             GetComponent<SpriteRenderer>().DOColor(new Color(1f, 1f, 1f, 1f), .3f);
         }

@@ -30,9 +30,16 @@ public class HeartParticle : MonoBehaviour
 
     void ActivateParticle()
     {
+        ShowParticle();
         SetSpeeds();
         SetDestinations();
         PlayParticleAnimation();
+        GameEvents.current.HeartCollected(1);
+    }
+
+    void ShowParticle()
+    {
+        heartImage.GetComponent<SpriteRenderer>().DOColor(new Color(1, 1, 1, 1), 0.2f);
     }
 
     void SetSpeeds()
@@ -54,8 +61,8 @@ public class HeartParticle : MonoBehaviour
 
         Sequence heartImageSequenceX = DOTween.Sequence();
         heartImageSequenceX.SetLoops(-1);
-        heartImageSequenceX.Append(heartImage.transform.DOLocalMoveX(xDestinationOffset, movementSpeed / xLoopCount).SetEase(Ease.InSine));
-        heartImageSequenceX.Append(heartImage.transform.DOLocalMoveX(xDestinationOffset * -1, movementSpeed / xLoopCount).SetEase(Ease.OutSine));
+        heartImageSequenceX.Append(heartImage.transform.DOLocalMoveX(xDestinationOffset, movementSpeed / xLoopCount).SetEase(Ease.OutSine));
+        heartImageSequenceX.Append(heartImage.transform.DOLocalMoveX(xDestinationOffset * -1, movementSpeed / xLoopCount).SetEase(Ease.InSine));
         heartImage.transform.DORotate(new Vector3(0, 360, 0), movementSpeed, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
         heartImage.GetComponent<SpriteRenderer>().DOColor(new Color(0f, 0f, 0f, 0f), (movementSpeed / 2) * 0.98f).SetDelay(movementSpeed / 2).SetEase(Ease.InQuint).OnComplete(ParticleFinished);
 
@@ -64,7 +71,7 @@ public class HeartParticle : MonoBehaviour
 
     void ParticleFinished()
     {
-        Debug.Log("Particle has finished");
+        
         Destroy(gameObject);
     }
 }
