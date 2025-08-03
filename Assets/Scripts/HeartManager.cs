@@ -10,11 +10,20 @@ public class HeartManager : MonoBehaviour
     private int totalHeartsCollected = 0;
     private GameObject[] hiddenHearts;
 
+    public GameObject HeartCollection;
     public TextMeshProUGUI textCounter;
+
+    public enum heartManagerState {Idle, Active,  UnActive, UnActivePause };
+    public heartManagerState currentHeartManagerState = heartManagerState.Idle;
     // Start is called before the first frame update
     void Start()
     {
+        var dataSet = Resources.Load<TextAsset>("WeddingHeart_CSV");
+        var dataLines = dataSet.text.Split('\n');
+        ProcessDataLines(dataLines);
         GameEvents.current.onHeartCollected += AddToTotalHearts;
+        GameEvents.current.onDialogueBoxHidden += ActivateHeartContainers;
+        GameEvents.current.onDialogueBoxShown += DeActivateHeartContainers;
     }
 
     // Update is called once per frame
@@ -26,6 +35,110 @@ public class HeartManager : MonoBehaviour
         }
     }
 
+    void CheckManagerState()
+    {
+        switch(currentHeartManagerState)
+        {
+            case heartManagerState.Active:
+                ActivateHeartContainers(null);
+                break;
+
+            case heartManagerState.UnActive:
+                DeActivateHeartContainers(null);
+                break;
+
+            case heartManagerState.UnActivePause:
+
+                break;
+
+            case heartManagerState.Idle:
+
+                break;
+        }
+    }
+
+    void ActivateHeartContainers(Heart heart)
+    {
+        CheckIfMoreHeartsNeedActivating();
+        GameObject[] activeHearts = GameObject.FindGameObjectsWithTag("HeartActive");
+        GameObject[] completedHearts = GameObject.FindGameObjectsWithTag("HeartCompleted");
+        for (var i = 0; i < activeHearts.Length; i++)
+        {
+            activeHearts[i].GetComponent<Heart>().TurnOnHeartCollider();
+        }
+
+        for (var i = 0; i < completedHearts.Length; i++)
+        {
+            
+            completedHearts[i].GetComponent<Heart>().TurnOnHeartCollider();
+        }
+
+        currentHeartManagerState = heartManagerState.Idle;
+    }
+
+    void DeActivateHeartContainers(Heart heart)
+    {
+        Debug.Log("Deactivating");
+        GameObject[] activeHearts = GameObject.FindGameObjectsWithTag("HeartActive");
+        GameObject[] completedHearts = GameObject.FindGameObjectsWithTag("HeartCompleted");
+
+        for(var i = 0; i < activeHearts.Length; i++)
+        {
+            
+            activeHearts[i].GetComponent<Heart>().TurnOffHeartCollider();
+        }
+
+        for (var i = 0; i < completedHearts.Length; i++)
+        {
+            Debug.Log("are we deactivating");
+            completedHearts[i].GetComponent<Heart>().TurnOffHeartCollider();
+        }
+
+        currentHeartManagerState = heartManagerState.UnActivePause;
+    }
+
+    void ProcessDataLines(string[] dataLines)
+    {
+        int heartContainerCount = HeartCollection.transform.childCount;
+        for(int i = 0; i < heartContainerCount; i++)
+        {
+            string currentLine = dataLines[i + 1];
+            Heart currentHeart = HeartCollection.transform.GetChild(i).GetChild(0).GetComponent<Heart>();
+            ProcessDataLine(currentLine, currentHeart);
+        }
+    }
+
+    void ProcessDataLine(string dataLine, Heart heart)
+    {
+        List<string> processedData = new List<string>();
+        string currentText = "";
+        int cutoff = 2;
+
+        for(var i = 0; i < dataLine.Length; i++)
+        {
+            if(cutoff != 0)
+            {
+                if (dataLine[i].Equals(','))
+                {
+                    processedData.Add(currentText);
+                    cutoff -= 1;
+                    currentText = "";
+                }
+                else
+                {
+                    currentText += dataLine[i];
+                }
+            }
+            else
+            {
+                currentText += dataLine[i];
+            }
+        }
+        processedData.Add(currentText);
+
+        heart.ProcessHeartData(processedData);
+    }
+
     void TestAddHeart()
     {
         AddToTotalHearts(1);
@@ -35,7 +148,15 @@ public class HeartManager : MonoBehaviour
     {
         totalHeartsCollected += amount;
         textCounter.text = totalHeartsCollected.ToString();
-        CheckIfMoreHeartsNeedActivating();
+        _CheckIfMoreHeartsNeedActivating();
+    }
+
+    void _CheckIfMoreHeartsNeedActivating()
+    {
+        if (currentHeartManagerState != heartManagerState.UnActive && currentHeartManagerState != heartManagerState.UnActivePause)
+        {
+            CheckIfMoreHeartsNeedActivating();
+        }
     }
 
     void CheckIfMoreHeartsNeedActivating()

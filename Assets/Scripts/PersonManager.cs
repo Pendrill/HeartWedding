@@ -7,7 +7,7 @@ using DG.Tweening;
 public class PersonManager : MonoBehaviour
 {
 
-    public GameObject personHolder1, persongHolder2;
+    public GameObject personHolder1, persongHolder2, textContainer;
     public Image Panel;
 
 
@@ -16,7 +16,11 @@ public class PersonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreateCharacters();
+        //CreateCharacters();
+        GameEvents.current.onActivateCharacters += ActivateCharacters;
+        GameEvents.current.onDeActivateCharacters += DeactivateCharacters;
+        GameEvents.current.onCharacterTalk += ActivateCharaterTalking;
+        GameEvents.current.onStopCharacterTalk += StopCharactersFromTalking;
     }
 
     // Update is called once per frame
@@ -43,33 +47,35 @@ public class PersonManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.C))
         {
-            ActivateCharacters();
+            //ActivateCharacters();
         }
         if(Input.GetKeyDown(KeyCode.D))
         {
-            DeactivateCharacters();
+            //DeactivateCharacters();
         }
     }
 
-    void ActivateCharacters()
+    void ActivateCharacters(Heart heart)
     {
         CreateCharacters();
         BringCharactersIn();
         EnableCharacterPanel();
+        ShowDialogueBox(heart);
     }
 
-    void DeactivateCharacters()
+    void DeactivateCharacters(Heart heart)
     {
         MoveCharactersOut();
         DisableCharacterPanel();
+        HideDialogueBox();
     }
 
     void BringCharactersIn()
     {
         RectTransform p1Rect = personHolder1.GetComponent<RectTransform>();
         RectTransform p2Rect = persongHolder2.GetComponent<RectTransform>();
-        p1Rect.DOAnchorPos(new Vector2(-600, -185), 0.3f).SetEase(Ease.OutBack);
-        p2Rect.DOAnchorPos(new Vector2(600, -185), 0.3f).SetEase(Ease.OutBack);
+        p1Rect.DOAnchorPos(new Vector2(-700, -185), 0.3f).SetEase(Ease.OutBack);
+        p2Rect.DOAnchorPos(new Vector2(700, -185), 0.3f).SetEase(Ease.OutBack);
     }
 
     void MoveCharactersOut()
@@ -78,6 +84,20 @@ public class PersonManager : MonoBehaviour
         RectTransform p2Rect = persongHolder2.GetComponent<RectTransform>();
         p1Rect.DOAnchorPos(new Vector2(-1400, -185), 0.3f).SetEase(Ease.InSine);
         p2Rect.DOAnchorPos(new Vector2(1400, -185), 0.3f).SetEase(Ease.InSine);
+    }
+
+    void ActivateCharaterTalking(string name)
+    {
+        if(name.Equals("<P1>"))
+        {
+            _character1Talking = true;
+            AnimateCharacterTalking(personHolder1);
+        }
+        else if(name.Equals("<P2>"))
+        {
+            _character2Talking = true;
+            AnimateCharacterTalking(persongHolder2);
+        }
     }
 
     void AnimateCharacterTalking(GameObject character)
@@ -102,12 +122,38 @@ public class PersonManager : MonoBehaviour
         }
     }
 
+    void StopCharactersFromTalking(string name)
+    {
+        _character1Talking = false;
+        _character2Talking = false;
+    }
 
 
+    void ShowDialogueBox(Heart heart)
+    {
+        RectTransform dialRectTrans = textContainer.GetComponent<RectTransform>();
+        dialRectTrans.DOAnchorPos(new Vector2(dialRectTrans.anchoredPosition.x, 155), 0.4f).SetEase(Ease.OutBack).SetDelay(0.2f).OnComplete(() => DialogueBoxShown(heart));
+    }
+
+    void HideDialogueBox()
+    {
+        RectTransform dialRectTrans = textContainer.GetComponent<RectTransform>();
+        dialRectTrans.DOAnchorPos(new Vector2(dialRectTrans.anchoredPosition.x, -200), 0.4f).SetEase(Ease.InBack).OnComplete(() => DialogueBoxHidden());
+    }
+
+    void DialogueBoxShown(Heart heart)
+    {
+        GameEvents.current.DialogueBoxShown(heart); //TODO: need heart ref here.
+    }
+
+    void DialogueBoxHidden()
+    {
+        GameEvents.current.DialogueBoxHidden(null);
+    }
 
     void EnableCharacterPanel()
     {
-        Panel.DOColor(new Color(0f, 0f, 0f, 0.95f), 0.6f);
+        Panel.DOColor(new Color(0f, 0f, 0f, 0.95f), 0.2f);
     }
 
     void DisableCharacterPanel()

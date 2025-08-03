@@ -6,10 +6,11 @@ using UnityEngine.UI;
 
 public class Heart : MonoBehaviour
 {
-
+    public int index = -1;
     public int heartsNeeded = -1;
+    public string rawText = "No Text Has Been Defined";
     public GameObject heartParticle;
-    public enum heartState {Wait, Born, Idle, Clicked, FinalBeats, Completing, Complete, ExtraClick};
+    public enum heartState {Wait, Born, BornWait, Idle, Clicked, FinalBeats, Completing, Complete, ExtraClick};
     public heartState currentHeartState = heartState.Wait;
 
     public float targetClickSize = 3f;
@@ -46,6 +47,13 @@ public class Heart : MonoBehaviour
         //Debug.Log("mouse is over the object");
     }
 
+    public void ProcessHeartData(List<string> data)
+    {
+        index = int.Parse(data[0]);
+        heartsNeeded = int.Parse(data[1]);
+        rawText = data[2];
+    }
+
     public void CheckHeartActivationStatus(int currentHearts)
     {
         if(currentHearts >= heartsNeeded)
@@ -59,6 +67,7 @@ public class Heart : MonoBehaviour
     {
         if(currentHeartState == heartState.Born)
         {
+            currentHeartState = heartState.BornWait;
             ShowInitialHeart();
         }
     }
@@ -145,7 +154,13 @@ public class Heart : MonoBehaviour
         HideSlider();
         HideShadow();
 
-        heartPos.OnComplete(SetHeartBeat);
+        heartPos.OnComplete(_SetHeartBeat);
+    }
+
+    void _SetHeartBeat()
+    {
+        GameEvents.current.ActivateCharacters(this);
+        SetHeartBeat();
     }
 
     void SetHeartBeat()
@@ -209,13 +224,26 @@ public class Heart : MonoBehaviour
 
     void ShowInitialHeart()
     {
+        Debug.Log("showing initial heart");
         transform.DOScale(new Vector3(1f, 1f, 1f), .3f).SetEase(Ease.OutBack).OnComplete(ShowInitialHeartComplete);
+       
     }
 
     void ShowInitialHeartComplete()
     {
         currentHeartState = heartState.Idle;
+        TurnOnHeartCollider();
+    }
+
+    public void TurnOnHeartCollider()
+    {
+        Debug.Log("are we enabling this");
         GetComponent<BoxCollider2D>().enabled = true;
+    }
+
+    public void TurnOffHeartCollider()
+    {
+        GetComponent<BoxCollider2D>().enabled = false;
     }
 
 

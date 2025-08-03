@@ -31,7 +31,6 @@ public class UpdateSlider : MonoBehaviour
 
     void SliderNeedsUpdating(Heart heart, float sliderValue)
     {
-        Debug.Log(heart == currentHeart);
        if(heart == currentHeart)
         {
             UpdateFill(sliderValue);

@@ -17,6 +17,13 @@ public class GameEvents : MonoBehaviour
     public event Action<Heart> onShowSlider;
     public event Action<Heart> onHideSlider;
     public event Action<int> onHeartCollected;
+    public event Action<Heart> onActivateCharacters;
+    public event Action<Heart> onDeActivateCharacters;
+    public event Action<Heart> onDialogueBoxShown;
+    public event Action<Heart> onDialogueBoxHidden;
+    public event Action<string> onCharacterTalk;
+    public event Action<string> onStopCharacterTalk;
+
 
 
 
@@ -57,6 +64,54 @@ public class GameEvents : MonoBehaviour
         if(onHeartCollected != null)
         {
             onHeartCollected(heartValue);
+        }
+    }
+
+    public void ActivateCharacters(Heart heart)
+    {
+        if(onActivateCharacters != null)
+        {
+            onActivateCharacters(heart);
+        }
+    }
+
+    public void DeActivateCharacters(Heart heart)
+    {
+        if(onDeActivateCharacters != null)
+        {
+            onDeActivateCharacters(heart);
+        }
+    }
+
+    public void DialogueBoxShown(Heart heart)
+    {
+        if(onDialogueBoxShown != null)
+        {
+            onDialogueBoxShown(heart);
+        }
+    }
+
+    public void DialogueBoxHidden(Heart heart)
+    {
+        if(onDialogueBoxHidden != null)
+        {
+            onDialogueBoxHidden(heart);
+        }
+    }
+
+    public void CharacterTalk(string name)
+    {
+        if(onCharacterTalk != null)
+        {
+            onCharacterTalk(name);
+        }
+    }
+
+    public void StopCharacterTalk(string name)
+    {
+        if(onStopCharacterTalk != null)
+        {
+            onStopCharacterTalk(name);
         }
     }
 }
