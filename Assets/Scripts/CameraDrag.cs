@@ -36,7 +36,7 @@ public class CameraDrag : MonoBehaviour
         if (!_isDragging) return;
 
         _difference = GetMousePosition - transform.position;
-        transform.DOMove(_origin - _difference, 1f);
+        transform.DOMove(_origin - _difference, 1f).SetId("cameraDrag");
 
         Vector3 backgroundTextureVector3 = transform.position;
        
@@ -46,6 +46,7 @@ public class CameraDrag : MonoBehaviour
     private void CenterCamera(Vector3 newPos)
     {
         //DOTween.KillAll();
+        DOTween.Kill("cameraDrag", false);
         transform.DOMove(newPos, 0.5f).SetEase(Ease.OutBack);
     }
 

@@ -7,20 +7,33 @@ using DG.Tweening;
 public class PersonManager : MonoBehaviour
 {
 
-    public GameObject personHolder1, persongHolder2, textContainer;
-    public Image Panel;
+    public GameObject personHolder1, persongHolder2, robotHolder, textContainer;
+    public PersonData personData1, personData2;
+    public Image Panel, coverPanel;
 
 
     private bool _character1Talking = false;
     private bool _character2Talking = false;
+    private bool _robotIsTalking = false;
     // Start is called before the first frame update
     void Start()
     {
         //CreateCharacters();
+        GameEvents.current.onGenerateNewCharacters += CreateCharacters;
         GameEvents.current.onActivateCharacters += ActivateCharacters;
         GameEvents.current.onDeActivateCharacters += DeactivateCharacters;
         GameEvents.current.onCharacterTalk += ActivateCharaterTalking;
         GameEvents.current.onStopCharacterTalk += StopCharactersFromTalking;
+        GameEvents.current.onRobotActivate += ActivateRobot;
+
+        TransitionToScreen();
+        
+    }
+
+    void TransitionToScreen()
+    {
+        coverPanel.color = new Color(0, 0, 0, 1);
+        coverPanel.DOColor(new Color(0, 0, 0, 0), 0.3f).SetDelay(1f).OnComplete(ActivateRobot);
     }
 
     // Update is called once per frame
@@ -41,23 +54,23 @@ public class PersonManager : MonoBehaviour
             _character1Talking = !_character1Talking;
             if(_character1Talking)
             {
-                AnimateCharacterTalking(personHolder1);
+                AnimateCharacterTalking(personHolder1, Random.Range(-186, -58));
             }
         }
 
         if(Input.GetKeyDown(KeyCode.C))
         {
-            //ActivateCharacters();
+            ActivateRobot();
         }
         if(Input.GetKeyDown(KeyCode.D))
         {
-            //DeactivateCharacters();
+            DeActivateRobot();
         }
     }
 
     void ActivateCharacters(Heart heart)
     {
-        CreateCharacters();
+        //CreateCharacters();
         BringCharactersIn();
         EnableCharacterPanel();
         ShowDialogueBox(heart);
@@ -66,10 +79,12 @@ public class PersonManager : MonoBehaviour
     void DeactivateCharacters(Heart heart)
     {
         MoveCharactersOut();
+        MoveRobotOut();
         DisableCharacterPanel();
         HideDialogueBox();
     }
 
+    
     void BringCharactersIn()
     {
         RectTransform p1Rect = personHolder1.GetComponent<RectTransform>();
@@ -91,22 +106,28 @@ public class PersonManager : MonoBehaviour
         if(name.Equals("<P1>"))
         {
             _character1Talking = true;
-            AnimateCharacterTalking(personHolder1);
+
+            AnimateCharacterTalking(personHolder1, Random.Range(-186, -58));
         }
         else if(name.Equals("<P2>"))
         {
             _character2Talking = true;
-            AnimateCharacterTalking(persongHolder2);
+            AnimateCharacterTalking(persongHolder2, Random.Range(-186, -58));
+        }
+        else if(name.Equals("<Rob>"))
+        {
+            _robotIsTalking = true;
+            AnimateCharacterTalking(robotHolder, Random.Range(-358, -284));
         }
     }
 
-    void AnimateCharacterTalking(GameObject character)
+    void AnimateCharacterTalking(GameObject character, int distance)
     {
         RectTransform rectTrans = character.GetComponent<RectTransform>();
         Vector2 originalPos = rectTrans.anchoredPosition;
 
         Sequence charTalkSequence = DOTween.Sequence();
-        charTalkSequence.Append(rectTrans.DOAnchorPos(new Vector2(rectTrans.anchoredPosition.x, Random.Range(-186, -58)), 0.15f));
+        charTalkSequence.Append(rectTrans.DOAnchorPos(new Vector2(rectTrans.anchoredPosition.x, distance), 0.15f));
         charTalkSequence.Append(rectTrans.DOAnchorPos(originalPos, 0.15f).OnComplete(() => _AnimateCharacterTalking()));
     }
 
@@ -114,11 +135,15 @@ public class PersonManager : MonoBehaviour
     {
         if(_character1Talking)
         {
-            AnimateCharacterTalking(personHolder1);
+            AnimateCharacterTalking(personHolder1, Random.Range(-186, -58));
         }
         if(_character2Talking)
         {
-            AnimateCharacterTalking(persongHolder2);
+            AnimateCharacterTalking(persongHolder2, Random.Range(-186, -58));
+        }
+        if(_robotIsTalking)
+        {
+            AnimateCharacterTalking(robotHolder, Random.Range(-358, -284));
         }
     }
 
@@ -126,20 +151,55 @@ public class PersonManager : MonoBehaviour
     {
         _character1Talking = false;
         _character2Talking = false;
+        _robotIsTalking = false;
+    }
+
+    void ActivateRobot()
+    {
+        BringRobotIn();
+        EnableCharacterPanel();
+        ShowDialogeBoxForTutorial();
+    }
+
+    void DeActivateRobot()
+    {
+        MoveRobotOut();
+        /*DisableCharacterPanel();
+        HideDialogueBox();*/
+    }
+
+    void BringRobotIn()
+    {
+        RectTransform robotRect = robotHolder.GetComponent<RectTransform>();
+        robotRect.DOAnchorPos(new Vector2(-655, -358), 0.3f).SetEase(Ease.OutBack);
+
+    }
+
+    void MoveRobotOut()
+    {
+        RectTransform robotRect = robotHolder.GetComponent<RectTransform>();
+        robotRect.DOAnchorPos(new Vector2(-1400, -358), 0.3f).SetEase(Ease.OutBack);
     }
 
 
     void ShowDialogueBox(Heart heart)
     {
         RectTransform dialRectTrans = textContainer.GetComponent<RectTransform>();
-        dialRectTrans.DOAnchorPos(new Vector2(dialRectTrans.anchoredPosition.x, 155), 0.4f).SetEase(Ease.OutBack).SetDelay(0.2f).OnComplete(() => DialogueBoxShown(heart));
+        dialRectTrans.DOAnchorPos(new Vector2(0, 155), 0.4f).SetEase(Ease.OutBack).SetDelay(0.2f).OnComplete(() => DialogueBoxShown(heart));
     }
 
     void HideDialogueBox()
     {
         RectTransform dialRectTrans = textContainer.GetComponent<RectTransform>();
-        dialRectTrans.DOAnchorPos(new Vector2(dialRectTrans.anchoredPosition.x, -200), 0.4f).SetEase(Ease.InBack).OnComplete(() => DialogueBoxHidden());
+        dialRectTrans.DOAnchorPos(new Vector2(0, -200), 0.4f).SetEase(Ease.InBack).OnComplete(() => DialogueBoxHidden());
     }
+
+    void ShowDialogeBoxForTutorial()
+    {
+        RectTransform dialRectTrans = textContainer.GetComponent<RectTransform>();
+        dialRectTrans.DOAnchorPos(new Vector2(300, 155), 0.4f).SetEase(Ease.OutBack).SetDelay(0.2f).OnComplete(() => DialogueBoxShownForTutorial());
+    }
+
 
     void DialogueBoxShown(Heart heart)
     {
@@ -149,6 +209,11 @@ public class PersonManager : MonoBehaviour
     void DialogueBoxHidden()
     {
         GameEvents.current.DialogueBoxHidden(null);
+    }
+
+    void DialogueBoxShownForTutorial()
+    {
+        GameEvents.current.ActivateTutorial();
     }
 
     void EnableCharacterPanel()
@@ -166,24 +231,24 @@ public class PersonManager : MonoBehaviour
      */
     void CreateCharacters()
     {
-        CreateCharacter(personHolder1);
-        CreateCharacter(persongHolder2);
+        CreateCharacter(personHolder1, personData1);
+        CreateCharacter(persongHolder2, personData2);
     }
 
-    void CreateCharacter(GameObject person)
+    void CreateCharacter(GameObject person, PersonData data)
     {
-        _SetupSkin(person);
-        _SetupFace(person);
-        _SetupHair(person);
-        _SetupClothes(person);
+        _SetupSkin(person, data);
+        _SetupFace(person, data);
+        _SetupHair(person, data);
+        _SetupClothes(person, data);
     }
 
-    void _SetupSkin(GameObject person)
+    void _SetupSkin(GameObject person, PersonData data)
     {
         Color _color = GetNewColor(false);
-        _HeadSkin(person, _color);
-        _NeckSkin(person, _color);
-        _ArmSkin(person, _color);
+        _HeadSkin(person, _color, data);
+        _NeckSkin(person, _color, data);
+        _ArmSkin(person, _color, data);
     }
 
     Color GetNewColor(bool random)
@@ -204,119 +269,74 @@ public class PersonManager : MonoBehaviour
         return _newColor;
     }
 
-    void _HeadSkin(GameObject person, Color _color)
+    void _HeadSkin(GameObject person, Color _color, PersonData data)
     {
-        GameObject head = person.transform.GetChild(1).gameObject;
-        head.transform.GetChild(0).GetComponent<Image>().color = _color;
+        data.currentHead.color = _color;
     }
 
-    void _NeckSkin(GameObject person, Color _color)
+    void _NeckSkin(GameObject person, Color _color, PersonData data)
     {
-        GameObject neck = person.transform.GetChild(0).gameObject;
-        neck.transform.GetChild(0).GetComponent<Image>().color = _color;
+        data.currentNeck.color = _color;
     }
 
-    void _ArmSkin(GameObject person, Color _color)
+    void _ArmSkin(GameObject person, Color _color, PersonData data)
     {
-        GameObject arms = person.transform.GetChild(3).GetChild(0).gameObject;
-        GameObject armR = arms.transform.GetChild(0).gameObject;
-        GameObject armL = arms.transform.GetChild(1).gameObject;
-
-        armR.GetComponent<Image>().color = _color;
-        armL.GetComponent<Image>().color = _color;
+        data.currentArmRight.color = _color;
+        data.currentArmLeft.color = _color;
     }
 
-    void _SetupFace(GameObject person)
+    void _SetupFace(GameObject person, PersonData data)
     {
-        GameObject mainFace = person.transform.GetChild(2).gameObject;
-        int faceIndex = Random.Range(0, mainFace.transform.childCount - 1);
-
-        for(var i = 0; i < mainFace.transform.childCount; i++)
+        if(data.currentFace)
         {
-            GameObject tempFace = mainFace.transform.GetChild(i).gameObject;
-            if(tempFace.activeSelf)
-            {
-                tempFace.SetActive(false);
-            }
-
-            if(faceIndex == i)
-            {
-                tempFace.SetActive(true);
-            }
+            data.currentFace.color = new Color(1, 1, 1, 0);
         }
+        int faceIndex = Random.Range(0, data.Faces.Length - 1);
+        data.currentFace = data.Faces[faceIndex];
+        data.currentFace.color = new Color(1, 1, 1, 1);
     }
 
-    void _SetupClothes(GameObject person)
+    void _SetupClothes(GameObject person, PersonData data)
     {
         Color _color = GetNewColor(true);
-        _SetupShirt(person, _color);
-        _SetupSleeves(person, _color);
+        _SetupShirt(person, _color, data);
+        _SetupSleeves(person, _color, data);
     }
 
-    void _SetupShirt(GameObject person, Color _color)
+    void _SetupShirt(GameObject person, Color _color, PersonData data)
     {
-        GameObject mainShirt = person.transform.GetChild(5).gameObject;
-        int shirtIndex = Random.Range(0, mainShirt.transform.childCount - 1);
-
-        for( var i = 0; i < mainShirt.transform.childCount; i++)
+        if(data.currentShirt)
         {
-            GameObject tempShirt = mainShirt.transform.GetChild(i).gameObject;
-            if (tempShirt.activeSelf)
-            {
-                tempShirt.SetActive(false);
-            }
-
-            if (shirtIndex == i)
-            {
-                tempShirt.GetComponent<Image>().color = _color;
-                tempShirt.SetActive(true);
-            }
+            data.currentShirt.color = new Color(1, 1, 1, 1);
         }
+        int shirtIndex = Random.Range(0, data.Shirt.Length - 1);
+        data.currentShirt = data.Shirt[shirtIndex];
+        data.currentShirt.color = _color;
     }
 
-    void _SetupSleeves(GameObject person, Color _color)
+    void _SetupSleeves(GameObject person, Color _color, PersonData data)
     {
-        GameObject mainSleeves = person.transform.GetChild(4).gameObject;
-        int sleevesIndex = Random.Range(0, mainSleeves.transform.childCount - 1);
-
-        for (var i = 0; i < mainSleeves.transform.childCount; i++)
+        if(data.currentSleeveLeft)
         {
-            GameObject tempSleeves = mainSleeves.transform.GetChild(i).gameObject;
-            if (tempSleeves.activeSelf)
-            {
-                tempSleeves.SetActive(false);
-            }
-
-            if (sleevesIndex == i)
-            {
-                GameObject tempSleeveR = tempSleeves.transform.GetChild(0).gameObject;
-                GameObject tempSleeveL = tempSleeves.transform.GetChild(1).gameObject;
-                tempSleeveL.GetComponent<Image>().color = _color;
-                tempSleeveR.GetComponent<Image>().color = _color;
-                tempSleeves.SetActive(true);
-            }
+            data.currentSleeveRight.color = new Color(1, 1, 1, 1);
+            data.currentSleeveLeft.color = new Color(1, 1, 1, 1);
         }
+        
+        int sleevesIndex = Random.Range(0, data.SleevesLeft.Length - 1);
+        data.currentSleeveLeft = data.SleevesLeft[sleevesIndex];
+        data.currentSleeveRight = data.SleevesRight[sleevesIndex];
+        data.currentSleeveLeft.color = _color;
+        data.currentSleeveRight.color = _color;
     }
 
-    void _SetupHair(GameObject person)
+    void _SetupHair(GameObject person, PersonData data)
     {
-        GameObject mainHair = person.transform.GetChild(6).gameObject;
-        int hairIndex = Random.Range(0, mainHair.transform.childCount - 1);
-
-        for (var i = 0; i < mainHair.transform.childCount; i++)
+        if(data.currentHair)
         {
-            GameObject tempHair = mainHair.transform.GetChild(i).gameObject;
-            if (tempHair.activeSelf)
-            {
-                tempHair.SetActive(false);
-            }
-
-            if (hairIndex == i)
-            {
-             
-                tempHair.GetComponent<Image>().color = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255) ;
-                tempHair.SetActive(true);
-            }
-        }
+            data.currentHair.color = new Color(1, 1, 1, 0);
+        }    
+        int hairIndex = Random.Range(0, data.Hair.Length - 1);
+        data.currentHair = data.Hair[hairIndex];
+        data.currentHair.color = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);
     }
 }

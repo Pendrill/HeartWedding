@@ -13,7 +13,7 @@ public class Heart : MonoBehaviour
     public enum heartState {Wait, Born, BornWait, Idle, Clicked, FinalBeats, Completing, Complete, ExtraClick};
     public heartState currentHeartState = heartState.Wait;
 
-    public float targetClickSize = 3f;
+    public float targetClickSize = 2f;
     public float clickSpeed = 0.3f;
     public float clicksNeeded = 10f;
 
@@ -24,6 +24,8 @@ public class Heart : MonoBehaviour
     private int finalBeats = 3;
     private Vector3 endScale;
 
+    public bool requiresTutorial = false;
+
    
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,8 @@ public class Heart : MonoBehaviour
         {
             Debug.LogError("Hearts Needed set to -1");
         }
+
+        transform.localScale = new Vector2(0, 0);
         //currentClickRate -= 1 / clicksNeeded;
     }
 
@@ -104,7 +108,6 @@ public class Heart : MonoBehaviour
     void HeartClicked()
     {
         GameEvents.current.HeartClicked(new Vector3(transform.position.x, transform.position.y, -10));
-        Debug.Log(clicksNeeded);
         CreateParticle(Random.Range(1,3));
        
         currentHeartState = currentClickRate < 1 ? heartState.Clicked : heartState.FinalBeats;
@@ -154,12 +157,21 @@ public class Heart : MonoBehaviour
         HideSlider();
         HideShadow();
 
+        GameEvents.current.GenerateNewCharacters();
+
         heartPos.OnComplete(_SetHeartBeat);
     }
 
     void _SetHeartBeat()
     {
-        GameEvents.current.ActivateCharacters(this);
+        if(requiresTutorial)
+        {
+            GameEvents.current.ActivateRobot();
+        }
+        else
+        {
+            GameEvents.current.ActivateCharacters(this);
+        }
         SetHeartBeat();
     }
 
@@ -169,14 +181,16 @@ public class Heart : MonoBehaviour
         Sequence heartBeat = DOTween.Sequence();
         heartBeat.Append(transform.DOScale(endScale * 1.2f, 0.3f).SetEase(Ease.InSine));
         heartBeat.Append(transform.DOScale(endScale , 1f).SetEase(Ease.InSine).OnComplete(() => CreateParticle(1)));
-        heartBeat.SetLoops(-1, LoopType.Restart).SetId("heartBeat");
+        string heartBeatName = "heartBeat" + index.ToString();
+        heartBeat.SetLoops(-1, LoopType.Restart).SetId(heartBeatName);
         ShowShadow();
 
     }
 
     void HeartExtraClick()
     {
-        DOTween.Kill("heartBeat", false);
+        string heartBeatName = "heartBeat" + index.ToString();
+        DOTween.Kill(heartBeatName, false);
         currentHeartState = heartState.ExtraClick;
 
         CreateParticle(5);
@@ -207,6 +221,7 @@ public class Heart : MonoBehaviour
     void IncreaseSlider()
     {
         currentSliderValue += 1 / (clicksNeeded + finalBeats);
+        Debug.Log(currentSliderValue);
         GameEvents.current.IncreaseHeartSlider(this.GetComponent<Heart>(), currentSliderValue); 
     }
 
@@ -224,8 +239,7 @@ public class Heart : MonoBehaviour
 
     void ShowInitialHeart()
     {
-        Debug.Log("showing initial heart");
-        transform.DOScale(new Vector3(1f, 1f, 1f), .3f).SetEase(Ease.OutBack).OnComplete(ShowInitialHeartComplete);
+        transform.DOScale(new Vector3(.95f, .95f, .95f), .3f).SetEase(Ease.OutBack).OnComplete(ShowInitialHeartComplete);
        
     }
 
@@ -237,7 +251,6 @@ public class Heart : MonoBehaviour
 
     public void TurnOnHeartCollider()
     {
-        Debug.Log("are we enabling this");
         GetComponent<BoxCollider2D>().enabled = true;
     }
 

@@ -13,17 +13,25 @@ public class HeartManager : MonoBehaviour
     public GameObject HeartCollection;
     public TextMeshProUGUI textCounter;
 
+  
+
     public enum heartManagerState {Idle, Active,  UnActive, UnActivePause };
     public heartManagerState currentHeartManagerState = heartManagerState.Idle;
+
+    private int actionIndex = -1;
     // Start is called before the first frame update
     void Start()
     {
         var dataSet = Resources.Load<TextAsset>("WeddingHeart_CSV");
         var dataLines = dataSet.text.Split('\n');
         ProcessDataLines(dataLines);
+       
         GameEvents.current.onHeartCollected += AddToTotalHearts;
         GameEvents.current.onDialogueBoxHidden += ActivateHeartContainers;
         GameEvents.current.onDialogueBoxShown += DeActivateHeartContainers;
+        GameEvents.current.onTutorialActivate += DeActivateHeartContainers;
+        GameEvents.current.onSetTutorialAction += SetTutorialAction;
+        GameEvents.current.onCompleteTutorialAction += CompleteTutorialAction;
     }
 
     // Update is called once per frame
@@ -76,9 +84,13 @@ public class HeartManager : MonoBehaviour
         currentHeartManagerState = heartManagerState.Idle;
     }
 
+    void DeActivateHeartContainers() //Workaround
+    {
+        DeActivateHeartContainers(null);
+    }
+
     void DeActivateHeartContainers(Heart heart)
     {
-        Debug.Log("Deactivating");
         GameObject[] activeHearts = GameObject.FindGameObjectsWithTag("HeartActive");
         GameObject[] completedHearts = GameObject.FindGameObjectsWithTag("HeartCompleted");
 
@@ -90,7 +102,6 @@ public class HeartManager : MonoBehaviour
 
         for (var i = 0; i < completedHearts.Length; i++)
         {
-            Debug.Log("are we deactivating");
             completedHearts[i].GetComponent<Heart>().TurnOffHeartCollider();
         }
 
@@ -162,13 +173,29 @@ public class HeartManager : MonoBehaviour
     void CheckIfMoreHeartsNeedActivating()
     {
         hiddenHearts = GameObject.FindGameObjectsWithTag("HeartHidden");
-        if(hiddenHearts != null && hiddenHearts.Length > 0)
+        if (hiddenHearts != null && hiddenHearts.Length > 0)
         {
             for (int i = 0; i < hiddenHearts.Length; i++)
             {
                 hiddenHearts[i].GetComponent<Heart>().CheckHeartActivationStatus(totalHeartsCollected);
             }
         }
+
+    }
+
+    void SetTutorialAction(int index)
+    {
+        actionIndex = index;
+    }
+
+    void CompleteTutorialAction()
+    {
         
+        if(actionIndex == 0)
+        {
+            AddToTotalHearts(1);
+        }
+
+        actionIndex = -1;
     }
 }

@@ -17,12 +17,18 @@ public class GameEvents : MonoBehaviour
     public event Action<Heart> onShowSlider;
     public event Action<Heart> onHideSlider;
     public event Action<int> onHeartCollected;
+    public event Action onGenerateNewCharacters;
     public event Action<Heart> onActivateCharacters;
     public event Action<Heart> onDeActivateCharacters;
     public event Action<Heart> onDialogueBoxShown;
     public event Action<Heart> onDialogueBoxHidden;
     public event Action<string> onCharacterTalk;
     public event Action<string> onStopCharacterTalk;
+    public event Action<int> onSetTutorialAction;
+    public event Action onCompleteTutorialAction;
+    public event Action onTutorialActivate;
+    public event Action onTutorialDeActivate;
+    public event Action onRobotActivate;
 
 
 
@@ -64,6 +70,14 @@ public class GameEvents : MonoBehaviour
         if(onHeartCollected != null)
         {
             onHeartCollected(heartValue);
+        }
+    }
+
+    public void GenerateNewCharacters()
+    {
+        if(onGenerateNewCharacters != null)
+        {
+            onGenerateNewCharacters();
         }
     }
 
@@ -112,6 +126,46 @@ public class GameEvents : MonoBehaviour
         if(onStopCharacterTalk != null)
         {
             onStopCharacterTalk(name);
+        }
+    }
+
+    public void SetTutorialAction(int index)
+    {
+        if(onSetTutorialAction != null)
+        {
+            onSetTutorialAction(index);
+        }
+    }    
+
+    public void CompleteTutorialAction()
+    {
+        if(onCompleteTutorialAction != null)
+        {
+            onCompleteTutorialAction();
+        }
+    }
+
+    public void ActivateTutorial()
+    {
+        if(onTutorialActivate != null)
+        {
+            onTutorialActivate();
+        }
+    }    
+
+    public void DeActivateTutorial()
+    {
+        if(onTutorialDeActivate != null)
+        {
+            onTutorialDeActivate();
+        }
+    }
+
+    public void ActivateRobot()
+    {
+        if(onRobotActivate != null)
+        {
+            onRobotActivate();
         }
     }
 }

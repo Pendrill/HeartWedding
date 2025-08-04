@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class TextManager : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class TextManager : MonoBehaviour
     private GameObject textObject;
     private TextMeshProUGUI tmpElement;
 
+    private string[] tutorialTextRaw;
+    private int tutorialCounter = 0;
+
 
     private List<string> characterOrder, lineOrder;
     // Start is called before the first frame update
@@ -27,7 +31,10 @@ public class TextManager : MonoBehaviour
         tmpElement = textObject.GetComponent<TextMeshProUGUI>();
         GameEvents.current.onDialogueBoxShown += DialogueBoxIsShown;
         GameEvents.current.onDialogueBoxHidden += DialogueBoxIsHidden;
+        GameEvents.current.onTutorialActivate += DialogueBoxIsShownForTutorial;
 
+        var dataSetTutorial = Resources.Load<TextAsset>("WeddingHeart_CSV_TutorialContent");
+        tutorialTextRaw = dataSetTutorial.text.Split('\n');
 
         typewriter.onTextShowed.AddListener(WaitingForUserClick);
     }
@@ -73,6 +80,14 @@ public class TextManager : MonoBehaviour
         ShowNextLineOfText();
     }
 
+    void DialogueBoxIsShownForTutorial()
+    {
+        GameEvents.current.SetTutorialAction(tutorialCounter);
+        ParseLineForTutorial();
+        currentLineIndex = 0;
+        ShowNextLineOfText();
+    }
+
     void ParseLine(string dataLine)
     {
         characterOrder = new List<string>();
@@ -108,8 +123,23 @@ public class TextManager : MonoBehaviour
         }
 
         lineOrder.Add(currentText);
-
     }
+
+    void ParseLineForTutorial()
+    {
+        characterOrder = new List<string>();
+        lineOrder = new List<string>();
+
+        lineOrder = tutorialTextRaw[tutorialCounter].Split("<rob>").ToList();
+        lineOrder[0] = lineOrder[0].Substring(1);
+        lineOrder[lineOrder.Count - 1] = lineOrder[lineOrder.Count - 1].Substring(0, lineOrder[lineOrder.Count -1].Length - 2);
+        tutorialCounter += 1;
+        for(var i = 0; i < lineOrder.Count; i++)
+        {
+            characterOrder.Add("<Rob>");
+        }
+    }
+
 
     void ShowNextLineOfText()
     {
@@ -145,6 +175,7 @@ public class TextManager : MonoBehaviour
     {
         currentHeartState = TextManagerState.Completing;
         ResetText();
+        GameEvents.current.CompleteTutorialAction();
         GameEvents.current.DeActivateCharacters(null);
 
         //Need to hide the text / banner

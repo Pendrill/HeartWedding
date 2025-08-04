@@ -47,7 +47,7 @@ public class UpdateSlider : MonoBehaviour
 
     void UpdatePivot(float value)
     {
-        pivot.transform.DOLocalMoveX(-0.75f + (value /2),  0.5f);
+        pivot.transform.DOLocalMoveX(-0.75f * (-1 * value),  0.5f);
     }
 
     void HideSlider(Heart heart)
