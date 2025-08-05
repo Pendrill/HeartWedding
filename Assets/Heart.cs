@@ -25,8 +25,10 @@ public class Heart : MonoBehaviour
     private Vector3 endScale;
 
     public bool requiresTutorial = false;
+    public AudioSource heartAudio;
+    public AudioClip grow, complete, extraClick;
 
-   
+
     // Start is called before the first frame update
     void Start()
     {
@@ -109,6 +111,7 @@ public class Heart : MonoBehaviour
     {
         GameEvents.current.HeartClicked(new Vector3(transform.position.x, transform.position.y, -10));
         CreateParticle(Random.Range(1,3));
+        PlayHeartSound(grow, 1);
        
         currentHeartState = currentClickRate < 1 ? heartState.Clicked : heartState.FinalBeats;
         currentClickRate += 1 / clicksNeeded;
@@ -125,7 +128,9 @@ public class Heart : MonoBehaviour
 
     void HeartFinalBeats()
     {
+        GameEvents.current.HeartClicked(new Vector3(transform.position.x, transform.position.y, -10));
         CreateParticle(Random.Range(4, 10));
+        PlayHeartSound(grow, 1);
         finalBeats -= 1;
         currentHeartState = finalBeats != 0 ? heartState.FinalBeats : heartState.Completing;
         Vector3 targetScale = transform.localScale * 1.1f;
@@ -148,11 +153,12 @@ public class Heart : MonoBehaviour
     {
         gameObject.tag = "HeartCompleted";
         //Do Final Animation
+        PlayHeartSound(complete, 1);
         Sequence heartPos = DOTween.Sequence();
-        heartPos.Append(transform.DOLocalMoveY(transform.localPosition.y + .85f, 0.4f).SetEase(Ease.InSine));
-        heartPos.Append(transform.DOLocalMoveY(transform.localPosition.y, 1f).SetDelay(0.1f).SetEase(Ease.InSine));
+        heartPos.Append(transform.DOLocalMoveY(transform.localPosition.y + 1.85f, 0.4f).SetEase(Ease.InSine));
+        heartPos.Append(transform.DOLocalMoveY(transform.localPosition.y, 2f).SetDelay(0.5f).SetEase(Ease.InSine));
         
-        transform.DORotate(new Vector3(0, 360, 0), 0.75f, RotateMode.FastBeyond360).SetLoops(2, LoopType.Restart).SetEase(Ease.Linear);
+        transform.DORotate(new Vector3(0, 360, 0), 1.45f, RotateMode.FastBeyond360).SetLoops(2, LoopType.Restart).SetEase(Ease.Linear);
 
         HideSlider();
         HideShadow();
@@ -179,7 +185,7 @@ public class Heart : MonoBehaviour
     {
         currentHeartState = heartState.Complete;
         Sequence heartBeat = DOTween.Sequence();
-        heartBeat.Append(transform.DOScale(endScale * 1.2f, 0.3f).SetEase(Ease.InSine));
+        heartBeat.Append(transform.DOScale(endScale * 1.2f, 0.3f).SetEase(Ease.InSine).OnComplete(() => PlayHeartSound(grow, 1)));
         heartBeat.Append(transform.DOScale(endScale , 1f).SetEase(Ease.InSine).OnComplete(() => CreateParticle(1)));
         string heartBeatName = "heartBeat" + index.ToString();
         heartBeat.SetLoops(-1, LoopType.Restart).SetId(heartBeatName);
@@ -190,6 +196,7 @@ public class Heart : MonoBehaviour
     void HeartExtraClick()
     {
         string heartBeatName = "heartBeat" + index.ToString();
+        PlayHeartSound(extraClick, 0.5f);
         DOTween.Kill(heartBeatName, false);
         currentHeartState = heartState.ExtraClick;
 
@@ -267,6 +274,13 @@ public class Heart : MonoBehaviour
             Instantiate(heartParticle, transform.parent.transform);
         }
         
+    }
+
+    void PlayHeartSound(AudioClip clip, float volume)
+    {
+        heartAudio.clip = clip;
+        heartAudio.volume = volume;
+        heartAudio.Play();
     }
 
 }

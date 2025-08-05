@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class HeartManager : MonoBehaviour
 {
@@ -19,6 +21,10 @@ public class HeartManager : MonoBehaviour
     public heartManagerState currentHeartManagerState = heartManagerState.Idle;
 
     private int actionIndex = -1;
+
+    bool returnToMenu = false;
+    public Image panel; //Adding another ref here cause i am lazy
+
     // Start is called before the first frame update
     void Start()
     {
@@ -197,5 +203,20 @@ public class HeartManager : MonoBehaviour
         }
 
         actionIndex = -1;
+    }
+
+    public void ReturnToMenu()
+    {
+        if(!returnToMenu)
+        {
+            returnToMenu = true;
+            panel.DOColor(new Color(0, 0, 0, 1), 0.3f).OnComplete(_ReturnToMenu);
+
+        }
+    }
+
+    void _ReturnToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }

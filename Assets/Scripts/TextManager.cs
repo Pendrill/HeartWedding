@@ -20,7 +20,10 @@ public class TextManager : MonoBehaviour
     private TextMeshProUGUI tmpElement;
 
     private string[] tutorialTextRaw;
+    private string[] helperTextRaw;
     private int tutorialCounter = 0;
+
+    private bool helperActivated = false;
 
 
     private List<string> characterOrder, lineOrder;
@@ -35,6 +38,9 @@ public class TextManager : MonoBehaviour
 
         var dataSetTutorial = Resources.Load<TextAsset>("WeddingHeart_CSV_TutorialContent");
         tutorialTextRaw = dataSetTutorial.text.Split('\n');
+
+        var dataSetHelper = Resources.Load<TextAsset>("WeddingHeart_CSV_HelperContent");
+        helperTextRaw = dataSetHelper.text.Split('\n');
 
         typewriter.onTextShowed.AddListener(WaitingForUserClick);
     }
@@ -82,10 +88,21 @@ public class TextManager : MonoBehaviour
 
     void DialogueBoxIsShownForTutorial()
     {
-        GameEvents.current.SetTutorialAction(tutorialCounter);
-        ParseLineForTutorial();
-        currentLineIndex = 0;
-        ShowNextLineOfText();
+        if(!helperActivated)
+        {
+            GameEvents.current.SetTutorialAction(tutorialCounter);
+            ParseLineForTutorial();
+            currentLineIndex = 0;
+            ShowNextLineOfText();
+        }
+        else if(helperActivated && currentHeartState == TextManagerState.Wait)
+        {
+            ParseLineforHelper();
+            currentLineIndex = 0;
+            ShowNextLineOfText();
+        }
+        
+       
     }
 
     void ParseLine(string dataLine)
@@ -140,6 +157,22 @@ public class TextManager : MonoBehaviour
         }
     }
 
+    void ParseLineforHelper()
+    {
+        helperActivated = false;
+        characterOrder = new List<string>();
+        lineOrder = new List<string>();
+
+        lineOrder = helperTextRaw[0].Split("<rob>").ToList();
+        lineOrder[0] = lineOrder[0].Substring(1);
+        lineOrder[lineOrder.Count - 1] = lineOrder[lineOrder.Count - 1].Substring(0, lineOrder[lineOrder.Count - 1].Length - 1);
+        for (var i = 0; i < lineOrder.Count; i++)
+        {
+            characterOrder.Add("<Rob>");
+        }
+
+    }
+
 
     void ShowNextLineOfText()
     {
@@ -177,6 +210,7 @@ public class TextManager : MonoBehaviour
         ResetText();
         GameEvents.current.CompleteTutorialAction();
         GameEvents.current.DeActivateCharacters(null);
+        currentHeartState = TextManagerState.Wait;
 
         //Need to hide the text / banner
     }
@@ -202,5 +236,10 @@ public class TextManager : MonoBehaviour
     void ResetText()
     {
         textAnimator.SetText("");
+    }
+
+    public void ActivateHelper()
+    {
+        helperActivated = true;
     }
 }

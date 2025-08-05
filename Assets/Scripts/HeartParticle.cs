@@ -6,6 +6,7 @@ using UnityEngine;
 public class HeartParticle : MonoBehaviour
 {
     GameObject heartContainer, heartImage;
+    public AudioSource particleAudio;
 
     private float yDestination, xDestinationOffset, rotationSpeed, movementSpeed, xLoopCount;
 
@@ -64,7 +65,7 @@ public class HeartParticle : MonoBehaviour
         heartImageSequenceX.Append(heartImage.transform.DOLocalMoveX(xDestinationOffset, movementSpeed / xLoopCount).SetEase(Ease.OutSine));
         heartImageSequenceX.Append(heartImage.transform.DOLocalMoveX(xDestinationOffset * -1, movementSpeed / xLoopCount).SetEase(Ease.InSine));
         heartImage.transform.DORotate(new Vector3(0, 360, 0), movementSpeed, RotateMode.FastBeyond360).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
-        heartImage.GetComponent<SpriteRenderer>().DOColor(new Color(0f, 0f, 0f, 0f), (movementSpeed / 2) * 0.98f).SetDelay(movementSpeed / 2).SetEase(Ease.InQuint).OnComplete(ParticleFinished);
+        heartImage.GetComponent<SpriteRenderer>().DOColor(new Color(0f, 0f, 0f, 0f), (movementSpeed / 2) * 0.98f).SetDelay(movementSpeed / 2).SetEase(Ease.InQuint).OnComplete(PlayParticleAudio);
 
 
     }
@@ -73,5 +74,12 @@ public class HeartParticle : MonoBehaviour
     {
         
         Destroy(gameObject);
+    }
+
+    void PlayParticleAudio()
+    {
+        Debug.Log("when does audio play");
+        particleAudio.Play();
+        Invoke("ParticleFinished", particleAudio.clip.length);
     }
 }

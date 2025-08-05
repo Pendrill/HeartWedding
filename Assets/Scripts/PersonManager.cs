@@ -226,6 +226,11 @@ public class PersonManager : MonoBehaviour
         Panel.DOColor(new Color(1f, 1f, 1f, 0f), 0.6f);
     }
 
+    public void CallActivateRobot()
+    {
+        GameEvents.current.ActivateRobot();
+    }
+
     /*
      * CHARACTER SETUP
      */

@@ -13,6 +13,8 @@ public class CameraDrag : MonoBehaviour
 
     public Material mat;
 
+    private Vector3 lastHeartPos;
+
     private void Awake()
     {
         _mainCamera = Camera.main;
@@ -46,8 +48,17 @@ public class CameraDrag : MonoBehaviour
     private void CenterCamera(Vector3 newPos)
     {
         //DOTween.KillAll();
+        lastHeartPos = newPos;
         DOTween.Kill("cameraDrag", false);
         transform.DOMove(newPos, 0.5f).SetEase(Ease.OutBack);
+    }
+
+    public void ReturnToLastHeart()
+    {
+        if(lastHeartPos != null)
+        {
+            CenterCamera(lastHeartPos);
+        }
     }
 
 
