@@ -10,7 +10,7 @@ public class MenuManager : MonoBehaviour
     public Febucci.UI.Core.TAnimCore textAnimator;
     public Febucci.UI.Core.TypewriterCore typewriter;
     public Image panel;
-    string title = "<bounce>Q_πd-001</bounce>";
+    string title = "<bounce>Q-πd_001</bounce>";
     bool startGame = true;
     public AudioSource music;
     public AudioSource buttonAudio;
@@ -89,12 +89,12 @@ public class MenuManager : MonoBehaviour
 
     public void ActivateCredits()
     {
-        credits.DOAnchorPosY(2095, 10f).SetEase(Ease.Linear);
+        credits.DOAnchorPosY(2342, 12f).SetEase(Ease.Linear);
     }
 
     public void DeActivateCredits()
     {
-        credits.DOAnchorPosY(-1120, 0f, true);
+        credits.DOAnchorPosY(-862, 0f, true);
     }
 
     public void QuitOut()
