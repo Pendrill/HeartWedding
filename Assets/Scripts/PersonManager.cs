@@ -71,7 +71,7 @@ public class PersonManager : MonoBehaviour
     void ActivateCharacters(Heart heart)
     {
         //CreateCharacters();
-        BringCharactersIn();
+        BringCharactersIn(heart);
         EnableCharacterPanel();
         ShowDialogueBox(heart);
     }
@@ -85,12 +85,17 @@ public class PersonManager : MonoBehaviour
     }
 
     
-    void BringCharactersIn()
+    void BringCharactersIn(Heart heart)
     {
         RectTransform p1Rect = personHolder1.GetComponent<RectTransform>();
-        RectTransform p2Rect = persongHolder2.GetComponent<RectTransform>();
         p1Rect.DOAnchorPos(new Vector2(-700, -185), 0.3f).SetEase(Ease.OutBack);
-        p2Rect.DOAnchorPos(new Vector2(700, -185), 0.3f).SetEase(Ease.OutBack);
+
+        if(!heart.onlyOnePerson)
+        {
+            RectTransform p2Rect = persongHolder2.GetComponent<RectTransform>();
+            p2Rect.DOAnchorPos(new Vector2(700, -185), 0.3f).SetEase(Ease.OutBack);
+        }
+       
     }
 
     void MoveCharactersOut()

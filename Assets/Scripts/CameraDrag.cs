@@ -4,8 +4,7 @@ using UnityEngine.InputSystem;
 using DG.Tweening;
 public class CameraDrag : MonoBehaviour
 {
-    private Vector3 _origin;
-    private Vector3 _difference;
+    private Vector3 _origin, _difference, _destination;
 
     private Camera _mainCamera;
 
@@ -13,7 +12,8 @@ public class CameraDrag : MonoBehaviour
 
     public Material mat;
 
-    private Vector3 lastHeartPos;
+    private Vector3 lastHeartPos = new Vector3(0,0,-10);
+    float upperLimit = 35f, rightLimit = 35f;
 
     private void Awake()
     {
@@ -34,15 +34,40 @@ public class CameraDrag : MonoBehaviour
 
     private void LateUpdate()
     {
-        mat.SetTextureOffset("_MainTex", transform.position / 30);
+        mat.SetTextureOffset("_MainTex", transform.position / 4);
         if (!_isDragging) return;
 
         _difference = GetMousePosition - transform.position;
-        transform.DOMove(_origin - _difference, 1f).SetId("cameraDrag");
+
+        transform.DOMove(ConfirmDestination(_origin - _difference), 1f).SetId("cameraDrag");
 
         Vector3 backgroundTextureVector3 = transform.position;
        
         //transform.position = _origin - _difference;
+    }
+
+    private Vector3 ConfirmDestination(Vector3 destination)
+    {
+        Vector3 finalDestination = destination;
+        if (finalDestination.x > upperLimit)
+        {
+            finalDestination.x = upperLimit;
+        }
+        else if (finalDestination.x < (upperLimit * -1))
+        {
+            finalDestination.x = (upperLimit * -1);
+        }
+
+        if (finalDestination.y > rightLimit)
+        {
+            finalDestination.y = rightLimit;
+        }
+        else if (finalDestination.y < (rightLimit * -1))
+        {
+            finalDestination.y = (rightLimit * -1);
+        }
+
+        return finalDestination;
     }
 
     private void CenterCamera(Vector3 newPos)

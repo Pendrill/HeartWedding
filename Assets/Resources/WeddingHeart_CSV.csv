@@ -1,3 +1,43 @@
 Index,HeartsNeeded,RawText
-1,1,"<P1> Hey is the text and animations working?<P2>Seems like it is, and the commas are being captured too!<P1>Ok awesome! That's good news"
-2,40,"<P2>Nice Job, you managed to unlock the second heart!<P2> And the same character can talk twice in a row!!"
+1,1,<P1>This element is for the tutorial of the first heart. It should not appear.
+2,40,"<P1>Hey! Just wanted to let you know I got home safe.<P2>Thanks for letting me know!<P2>And thanks for dropping by, it was really nice seeing you.<P1>Same here, let's do it again sometime.<P2>Sounds good! :)"
+3,90,"<P2>A few of us were thinking about going to the movies on Friday.<P2>You should join us!<P1>That sounds amazing.<P1>When and where?<P2>We are still figuring that out, but we'll let you know!"
+4,130,<P1>I know we haven't talked in a while...<P1>But I wanted to check in and see how you are doing.<P1>Hope you are doing alright!
+5,200,"<P1>Uhm, excuse me?<P1>Hi sorry, just wanted to let you know your backpack is open.<P2>Oh!! Thanks, yeah that should definitely be closed.<P1>No problem, have a good one!"
+6,200,"<P1>How much do you think this top is?<P2>I don't know, like $20?<P1>More...<P2>Can't be more than $60.<P1>It's $75.<P2>Daaaang that's crazy!<P2>But you like it?<P1>It is cute...<P2>I'll get it for you!<P1>No no it's ok! <P2>No, it makes me happy to get it for you!"
+7,300,<P1>Hey Mom!<P1>Just wanted to wish you a happy Mother's Day!<P1>Hope you and Dad are having a nice day!
+8,320,"<P2>Hey, I just heard the news...<P2>I'm so sorry for your loss.<P2>I'm still at work right now, but I'll be done in 15.<P2>I'll call you then.<P1>Thanks man, I appreciate it."
+9,400,<P1>Was baking some chocolate chip cookies tonight...<P1>And I made way more than I need!<P1>I'll drop by tomorrow after work.<P2>Oh wow thank you!<P2>I was actually really craving something sweet!
+10,420,"<P2>Hi honey!<P2>I'm making dinner.<P2>Will bring some over for you as well.<P1>Thanks, see you soon! :)"
+11,600,"<P1>Hey Dad!<P1>Happy Birthday, thinking of you :)"
+12,690,"<P1>Saw there was like a 20gb Fortnite update.<P1>Guess they started a new season.<P1>I turned on your computer and updated it for you as well!<P2>Yay, thank you! Let's see if anyone else wants to play tonight :) "
+13,800,"<P1>Heard you just got back in town.<P2>That's right, landed back in yesterday :)<P1>Nice! We should meet up soon then!<P1>I wanna hear all about your trip.<P2>Yessss that sounds nice! I am free tomorrow!"
+14,950,"<P1>Wow this pasta is really good!<P2>Let me try it!<P2>Oh yeah, that is really nice!!<P2>I can try and make it at home for you sometime.<P1>That would be nice :)"
+15,1100,"<P2>I'm going to be moving back to NYC in the fall!<P1>For real? That's so exciting!<P2>I'm so excited!<P1>Ok wait, we need to celebrate once you are officially back!"
+16,1200,"<P1>I was reading this comic the other day<P1>And I actually think you might really enjoy it.<P1>Here, I brought it with me to give to you!<P2>What!! That's so sweet, thank you!"
+17,1400,<P2>This was such an awesome evening.<P1>Yeah!!<P1>We should take a picture to remember this moment!<P2>Yesssss!<P1>Fake Album Coverrrr!!!
+18,1600,"<P1>Oh actually, I wanted to watch this trailer with you.<P2>Yeah, put it on!"
+19,2000,<P2>Thanks for letting me crash at your place last night.<P2>Maybe the 20 shots for our group was a bit much...<P1>Don't think twice about it!<P1>I'm just glad you are feeling better.<P2>Yeah definitely much better!<P2>I don't need to throw up on the sidewalk at the very least...<P1>You should probably eat.<P1>I picked up some breakfast and some drinks with plenty of electrolytes!
+20,2200,<P1>Can you play some Resident Evil 7 for me?<P2>Oh yeah! Let me download it!
+21,2200,<P2>By the way!<P2>I was planning on coming to visit in August.<P2>Flights are pretty cheap then and I wanted to make sure you were free.<P1>Yes!! So excited to see you!
+22,2200,<P1>I'm home!<P2>Hi honey :)<P1>Picked up some dinner on my way back.<P1>New Thai place that opened up by my work.<P2>Perfect timing! I am starving!
+23,3000,<P1>I was thinking...<P1>We should plan a trip to Vegas this year!<P2>We could invite the whole group :)<P2>And we can rent out a cabana and have a yap sesh!
+24,3100,"<P1>I found these shoes I like<P1>but I'm going to wait, maybe there will be a sale...<P2>Show me!<P2>Oh yeah, these are nice.<P2>You'll look so cute in them!<P2>Send me the link, just in case... "
+25,3100,<P2>Going to make some dinner.<P2>Should be ready in 30 minutes!<P2>Do you want to stream some Silent Hill 2?<P1>You got it!<P1>I'll provide the entertainment for the night!
+26,3400,<P1>Happy Birthday!! Hope you like your gift!<P2>Oh wow!! A coffee bean sampler!<P1>I figured since you got yourself that fancy coffee machine...<P1>You should have some nice beans to pair it with!<P2>That's so thoughtful!
+27,3400,<P2>The circle is closing... just run!<P1>I'm not leaving you behind...<P1>I'm sticking this revive!!!
+28,3800,"<P1>Ok, I'm ready to go!<P2>Wait, you didn't want to pick up that Elite Trainer Box?<P2>I'll split it with you so we can open some packs together!<P1>Let's do it!"
+29,4000,<P2>You should come over this weekend!<P2>We can have a board game day :)<P1>You know I'll be there!
+30,4100,"<P1>Welcome home!<P2>Did you watch the TikToks I sent you?<P1>Not yet, I was waiting to watch them with you!<P2>Let's watch!"
+31,4100,"<P1>I'm not feeling well...<P2>Oh no!<P2>Just stay in bed, I'll take care of you!<P2>Let me get some soup going!"
+32,4400,<P2>There was this package downstairs for you.<P1>Oh that's actually for you!<P2>A little gift.<P1>What!! For me? Thank you :)
+33,4500,"<P2>Good morning!<P1>Morning :)<P2>Let me make some coffee, you want some?<P1>Yes please."
+34,4800,<P2>I need a hug.<P1>Come here.
+35,5000,<P1>Had a dream about you last night.<P1>Thank you for visiting me.<P1>Miss you very much!
+36,5100,"<P1>Sorry it took so long to respond.<P1>I've just been so busy.<P2>No worries!<P2>Hopefully you are doing ok?<P1>Yeah, just lots going on...<P1>How are you?"
+37,5200,"<P2>You like this show right?<P1>Yeah, it's one of my favorites!<P2>Why don't we watch it together?<P1>You want to?<P2>Yeah, of course!!"
+38,5200,"<P1>Guess what?<P2>What?<P1>I got us tickets for the Interstellar re-release in IMAX!<P2>No way??<P1>Yep, best seats in the house too :)"
+39,5500,<P2>You should book it!<P1>You think so?<P2>Yessss! When's the next time you are going to be in Disneyland?<P2>Go build your Lightsaber!!<P1>Ok I'm going to book it!
+40,5500,<P1>Just wanted to let you know I'm thinking of you.<P1>Hope you are doing ok.
+41,5800,<P1>Good morning <3<P1>I know you are still sleeping<P1>but I just wanted to let you know I got to work safely!
+42,6000,"<P1>Hey, are you free August 22nd?<P1>I would like to formally invite you to my wedding!<P2>Of course!! I'm honored I get to share this day with you!<P2>:)"

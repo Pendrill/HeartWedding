@@ -164,8 +164,26 @@ public class HeartManager : MonoBehaviour
     public void AddToTotalHearts(int amount)
     {
         totalHeartsCollected += amount;
-        textCounter.text = totalHeartsCollected.ToString();
+        textCounter.text = _ConvertHeartCount(totalHeartsCollected);
         _CheckIfMoreHeartsNeedActivating();
+    }
+
+    string _ConvertHeartCount(int amount)
+    {
+        //Debug.Log(amount);
+        if(amount / 1000 >= 1)
+        {
+            float div = amount / 1000.0f;
+            
+
+            float num = Mathf.Floor(div);
+            float dec = div - num;
+
+            Debug.Log(dec);
+            return (num.ToString() + "K" + dec.ToString()[2]);
+        }
+
+        return amount.ToString();
     }
 
     void _CheckIfMoreHeartsNeedActivating()

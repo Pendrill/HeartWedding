@@ -112,7 +112,9 @@ public class TextManager : MonoBehaviour
 
         string currentText = "<";
         bool checkingCharacterIdentifier = true;
-        for(var i = 2; i < dataLine.Length - 2; i++ ) //Ignore initial and final quotes in string
+
+        var startIndex = dataLine[0].Equals('"') ? 1 : 0; 
+        for(var i = startIndex; i < dataLine.Length - (1 + startIndex); i++ ) //Ignore initial and final quotes in string
         {
             if (checkingCharacterIdentifier)
             {
@@ -146,10 +148,16 @@ public class TextManager : MonoBehaviour
     {
         characterOrder = new List<string>();
         lineOrder = new List<string>();
+        tutorialTextRaw[tutorialCounter] = tutorialTextRaw[tutorialCounter].Trim();
 
         lineOrder = tutorialTextRaw[tutorialCounter].Split("<rob>").ToList();
-        lineOrder[0] = lineOrder[0].Substring(1);
-        lineOrder[lineOrder.Count - 1] = lineOrder[lineOrder.Count - 1].Substring(0, lineOrder[lineOrder.Count -1].Length - 2);
+
+        
+        if(lineOrder[0][0].Equals('"'))
+        {
+            lineOrder[0] = lineOrder[0].Substring(1);
+            lineOrder[lineOrder.Count - 1] = lineOrder[lineOrder.Count - 1].Substring(0, lineOrder[lineOrder.Count - 1].Length - 1);
+        }
         tutorialCounter += 1;
         for(var i = 0; i < lineOrder.Count; i++)
         {
@@ -163,7 +171,14 @@ public class TextManager : MonoBehaviour
         characterOrder = new List<string>();
         lineOrder = new List<string>();
 
+        helperTextRaw[0] = helperTextRaw[0].Trim();
         lineOrder = helperTextRaw[0].Split("<rob>").ToList();
+        if (lineOrder[0][0].Equals('"'))
+        {
+
+        }
+
+        
         lineOrder[0] = lineOrder[0].Substring(1);
         lineOrder[lineOrder.Count - 1] = lineOrder[lineOrder.Count - 1].Substring(0, lineOrder[lineOrder.Count - 1].Length - 1);
         for (var i = 0; i < lineOrder.Count; i++)

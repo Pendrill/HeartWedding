@@ -24,6 +24,7 @@ public class Heart : MonoBehaviour
     private int finalBeats = 3;
     private Vector3 endScale;
 
+    public bool onlyOnePerson = false;
     public bool requiresTutorial = false;
     public AudioSource heartAudio;
     public AudioClip grow, complete, extraClick;
@@ -228,7 +229,6 @@ public class Heart : MonoBehaviour
     void IncreaseSlider()
     {
         currentSliderValue += 1 / (clicksNeeded + finalBeats);
-        Debug.Log(currentSliderValue);
         GameEvents.current.IncreaseHeartSlider(this.GetComponent<Heart>(), currentSliderValue); 
     }
 
